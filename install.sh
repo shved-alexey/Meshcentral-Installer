@@ -10,6 +10,7 @@ sudo apt-get install -y curl sudo  > null
 echo "Installing MeshCentral"
 curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt update > null
+sudo apt install -y gnupg curl
 sudo apt install -y gcc g++ make
 sudo apt install -y nodejs
 sudo npm install -g npm
@@ -90,8 +91,11 @@ sudo systemctl stop meshcentral
 
 if [ $(lsb_release -si | tr '[:upper:]' '[:lower:]') = "ubuntu" ]
 then
-wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
-echo "deb http://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/5.0" multiverse | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
+curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
+   sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
+   --dearmor
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
 elif [ $(lsb_release -si | tr '[:upper:]' '[:lower:]') = "debian" ]
 then
 wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
